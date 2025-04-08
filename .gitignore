@@ -1,2 +1,20 @@
+# Arquivos e pastas do Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Ambientes virtuais
 mlops_env/
+venv/
+env/
+*.env
+
+# Configurações do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Arquivos do MLflow
 mlruns/

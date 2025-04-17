@@ -76,7 +76,7 @@ def train_random_forest(X, y, dataset_name, mlflow_dataset):
             model_info = mlflow.sklearn.log_model(rf, "random_forest_model",
                                      signature=signature,
                                      input_example=X_train, 
-                                     registered_model_name=f"RF_{params['n_estimators']}_{params['max_depth']}_{params['min_samples_split']}_{params['min_samples_leaf']}")
+                                     registered_model_name=f"RandomForestGridSearch")
 
             loaded_model = mlflow.pyfunc.load_model(model_info.model_uri)
             predictions = loaded_model.predict(X_test)
@@ -95,11 +95,18 @@ def train_random_forest(X, y, dataset_name, mlflow_dataset):
 
     return rf
 
+def train(dataset_names):
+    data = pd.DataFrame()
+    for dataset in dataset_names:
+        df = load_data(dataset)
+        data = pd.concat([data, df], ignore_index=True)
+
+    X, y, mlflow_dataset = preprocess_data(data)
+    rf = train_random_forest(X, y, dataset_names, mlflow_dataset)
+
 def main():
-    dataset_name = "Flight_Price_Dataset_of_Bangladesh"
-    df = load_data(dataset_name)
-    X, y, mlflow_dataset = preprocess_data(df)
-    rf = train_random_forest(X, y, dataset_name, mlflow_dataset)
+    dataset_name = ["Flight_Price_Dataset_of_Bangladesh"]
+    train(dataset_name)
 
 if __name__ == "__main__":
     main()

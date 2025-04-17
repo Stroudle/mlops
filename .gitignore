@@ -18,3 +18,7 @@ Thumbs.db
 
 # Arquivos do MLflow
 mlruns/
+
+# Arquivos do Evidently
+reports/
+*.html

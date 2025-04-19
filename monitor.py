@@ -3,16 +3,18 @@ import os
 import pandas as pd
 from evidently.report import Report
 from evidently.metric_preset import DataDriftPreset
-from flight_prediction import train
+from flight_prediction import run_model_training
 from preprocessing import preprocess_data
 from datetime import datetime
 
 # Função para verificar drift
 def check_for_drift(drift_score, drift_by_columns):
     num_columns_drift = sum(1 for col, values in drift_by_columns.items() if values.get("drift_detected", False))
+    
     if drift_score > 0.5 or num_columns_drift > 2:
         print(f"Drift detectado! Score de drift: {drift_score}, Colunas com drift: {num_columns_drift}")
         print("Iniciando re-treino do modelo com os dados da API...")
+        # Chamar a função de re-treino do modelo
         retrain_model()
     else:
         print("Nenhum drift detectado. O modelo atual ainda é válido.")
@@ -27,6 +29,7 @@ def evaluate_model(ref_data, current_data):
     report = Report(metrics=[DataDriftPreset()])
     report.run(reference_data=ref_data, current_data=current_data)
 
+    # Salvar o relatório de drift
     if not os.path.exists("reports"):
         os.makedirs("reports")
 
@@ -41,7 +44,6 @@ def evaluate_model(ref_data, current_data):
     drift_by_columns = report_dict["metrics"][1]["result"].get("drift_by_columns", {})
     columns_with_drift = [col for col, values in drift_by_columns.items() if values.get("drift_detected", False)]
 
-    # Imprimir as colunas com drift
     if columns_with_drift:
         print(f"Colunas com drift detectado: {', '.join(columns_with_drift)}")
 
@@ -59,15 +61,15 @@ def load_data(file_name):
 
 # Função para re-treinar o modelo com os dados da API
 def retrain_model():
-    dataset_names = ["Flight_Price_Dataset_of_Bangladesh", "api_inputs"]
+    dataset_names = ["Flight_Price_Dataset_of_Bangladesh", "model_inputs"]
     print("Re-treinando o modelo com os dados da API...")
-    train(dataset_names)
+    run_model_training(dataset_names)
     print("Re-treino concluído e modelo registrado no MLflow.")
 
 # Função principal
 def main():
     df = load_data("Flight_Price_Dataset_of_Bangladesh")
-    df_input = load_data("api_inputs")
+    df_input = load_data("model_inputs")
     drift_score, drift_by_columns = evaluate_model(df, df_input)
     check_for_drift(drift_score, drift_by_columns)
 

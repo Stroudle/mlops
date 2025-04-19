@@ -17,7 +17,7 @@ def simulate_drift(data):
     return df
 
 # Fazer previsões com o modelo
-def get_predictions(data):
+def get_predictions(data, model):
     columns = [
         "Airline", "Source", "Destination", "Duration (hrs)", "Stopovers",
         "Aircraft Type", "Class", "Booking Source", "Base Fare (BDT)", "Tax & Surcharge (BDT)",
@@ -26,6 +26,7 @@ def get_predictions(data):
 
     # Converter os dados para o formato esperado pelo endpoint
     payload = {
+        "model": model,  # Nome do modelo a ser usado
         "data": data[columns].values.tolist(),
         "columns": columns
     }
@@ -44,11 +45,13 @@ def get_predictions(data):
 
 def main():
     data = load_data()
-
+    # Simular drift nos dados
     data = simulate_drift(data)
 
-    predictions = get_predictions(data)
-    print("Predições:", predictions)
+    model = "linear_regression"
+    # Fazer previsões
+    predictions = get_predictions(data, model)
+    print(f"Predições usando o modelo '{model}':", predictions)
 
 if __name__ == "__main__":
     main()

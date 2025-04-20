@@ -3,8 +3,8 @@ import os
 import pandas as pd
 from evidently.report import Report
 from evidently.metric_preset import DataDriftPreset
-from flight_prediction import run_model_training
-from preprocessing import preprocess_data
+from train_model import run_model_training
+from preprocess import preprocess_data
 from datetime import datetime
 
 # Função para verificar drift

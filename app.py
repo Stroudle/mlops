@@ -4,7 +4,7 @@ import mlflow.pyfunc
 import pandas as pd
 import os
 from sklearn.preprocessing import LabelEncoder, StandardScaler
-from preprocessing import preprocess_data
+from preprocess import preprocess_data
 
 app = FastAPI()
 
